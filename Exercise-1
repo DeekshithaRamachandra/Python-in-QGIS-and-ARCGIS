@@ -1,0 +1,81 @@
+# donuts
+# This function takes a value "count" and returns a formatted string.
+# If count is an integer less than 10 → return the exact number.
+# If count is 10 or more → return "many" instead of the number.
+# If count is not an integer → also return "many" (to avoid errors).
+def donuts(count):
+    # Check if the input is NOT an integer (e.g., string like "twentyone")
+    if not isinstance(count, int):
+        return "Number of donuts: many"
+    
+    # If count is less than 10, return the actual number
+    if count < 10:
+        return f"Number of donuts: {count}"
+    
+    # Otherwise (count >= 10), return "many"
+    else:
+        return "Number of donuts: many"
+
+
+# verbing
+# This function modifies a string based on its length and ending.
+# Rules:
+# - If length < 3 → return unchanged
+# - If string ends with "ing" → add "ly"
+# - Otherwise → add "ing"
+def verbing(s):
+    # Check if string length is less than 3
+    if len(s) < 3:
+        return s  # No change needed
+    
+    # Check if string already ends with "ing"
+    if s.endswith("ing"):
+        return s + "ly"  # Add "ly"
+    
+    # Otherwise, append "ing"
+    else:
+        return s + "ing"
+
+
+# remove_adjacent
+# This function removes consecutive duplicate elements from a list.
+# Example: [1, 2, 2, 3] → [1, 2, 3]
+def remove_adjacent(nums):
+    # Create an empty list to store the result
+    result = []
+    
+    # Loop through each number in the input list
+    for num in nums:
+        # If result is empty OR last element is different → add number
+        if len(result) == 0 or result[-1] != num:
+            result.append(num)
+        # If same as last element → skip (removes duplicate)
+    
+    # Return the cleaned list
+    return result
+
+
+# main function
+# This function tests all three functions with predefined examples.
+def main():
+    print('donuts')
+    print(donuts(4))            # Expected: Number of donuts: 4
+    print(donuts(9))            # Expected: Number of donuts: 9
+    print(donuts(10))           # Expected: Number of donuts: many
+    print(donuts('twentyone'))  # Expected: Number of donuts: many
+
+    print('verbing')
+    print(verbing('hail'))      # Expected: hailing
+    print(verbing('swiming'))   # Expected: swimingly
+    print(verbing('do'))        # Expected: do
+
+    print('remove_adjacent')
+    print(remove_adjacent([1, 2, 2, 3]))       # Expected: [1, 2, 3]
+    print(remove_adjacent([2, 2, 3, 3, 3]))    # Expected: [2, 3]
+    print(remove_adjacent([]))                # Expected: []
+
+
+# This ensures that main() runs only when the script is executed directly
+# (and not when it is imported as a module).
+if __name__ == '__main__':
+    main()
