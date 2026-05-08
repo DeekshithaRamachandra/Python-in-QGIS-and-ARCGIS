@@ -1,3 +1,4 @@
+ 
 # This module contains a ShoppingCart class for managing shopping cart items.
  
 class ShoppingCart:
@@ -38,3 +39,4 @@ class ShoppingCart:
     # Calculate total quantity of items
     def total_items(self):
         return sum(self.cart.values())
+ 
