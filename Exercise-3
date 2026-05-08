@@ -39,3 +39,4 @@ cart.remove_item("Bananas")
 print("\nUpdated Cart:")
 cart.display_cart()
 print("Total quantity:", cart.total_items())
+ 
