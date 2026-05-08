@@ -1,4 +1,4 @@
- # Makes easy_shopping a package and imports classes
+# Makes easy_shopping a package and imports classes
  
 from .calculator import Calculator
 from .shopping import ShoppingCart
