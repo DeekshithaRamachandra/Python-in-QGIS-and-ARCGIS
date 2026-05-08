@@ -1,8 +1,25 @@
-This repository contains my solution for Exercise 3 of the Python in QGIS & ArcGIS
+ 
+# calculator.py
+# This module contains a Calculator class for performing basic mathematical operations.
+ 
+class Calculator:
+    """A simple calculator class."""
 
-Implemented Tasks:
-* Calculator class with addition, subtraction, multiplication, and division methods
-* ShoppingCart class with item management and quantity calculation
-* Error handling for division by zero
-* Python package creation using __init__.py
-* Successful package import in go_shopping.py
+    # Addition method
+    def add(self, a, b):
+        return a + b
+
+    # Subtraction method
+    def subtract(self, a, b):
+        return a - b
+
+    # Multiplication method
+    def multiply(self, a, b):
+        return a * b
+
+    # Division method
+    def divide(self, a, b):
+        # Prevent division by zero
+        if b == 0:
+            return "Error: Division by zero is not allowed."
+        return a / b
