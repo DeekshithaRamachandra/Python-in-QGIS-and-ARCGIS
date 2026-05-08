@@ -1,42 +1,22 @@
+# This script imports the easy_shopping package
  
-# Main script for testing Calculator and ShoppingCart classes
- 
-# Import classes from modules
-from calculator import Calculator
-from shopping import ShoppingCart
+# Import classes from package
+from easy_shopping import Calculator, ShoppingCart
 
-
-# Create Calculator object
+# Test Calculator
 calc = Calculator()
 
-print("----- Calculator Tests -----")
-
-# Test calculations
-print("7 + 5 =", calc.add(7, 5))
-print("34 - 21 =", calc.subtract(34, 21))
-print("54 * 2 =", calc.multiply(54, 2))
-print("144 / 2 =", calc.divide(144, 2))
-print("45 / 0 =", calc.divide(45, 0))
+print("Package Calculator Test")
+print("10 + 5 =", calc.add(10, 5))
 
 
-print("\n Shopping Cart Tests")
-
-# Create ShoppingCart object
+# Test ShoppingCart
 cart = ShoppingCart()
 
-# Add 3 different items
-cart.add_item("Apples", 4)
-cart.add_item("Bananas", 2)
-cart.add_item("Milk", 1)
+cart.add_item("Bread", 2)
+cart.add_item("Eggs", 12)
 
-# Display cart and total quantity
+print("\nPackage Shopping Cart Test")
 cart.display_cart()
-print("Total quantity:", cart.total_items())
 
-# Remove one item
-cart.remove_item("Bananas")
-
-# Display updated cart
-print("\nUpdated Cart:")
-cart.display_cart()
 print("Total quantity:", cart.total_items())
