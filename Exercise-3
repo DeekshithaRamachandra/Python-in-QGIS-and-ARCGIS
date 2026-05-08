@@ -1,8 +1,7 @@
-This repository contains my solution for Exercise 3 of the Python in QGIS & ArcGIS:
+# This file makes easy_shopping a Python package.
 
-Implemented Tasks:
-* Calculator class with addition, subtraction, multiplication, and division methods
-* ShoppingCart class with item management and quantity calculation
-* Error handling for division by zero
-* Python package creation using __init__.py
-* Successful package import in go_shopping.py
+# Import Calculator class
+from .calculator import Calculator
+
+# Import ShoppingCart class
+from .shopping import ShoppingCart
