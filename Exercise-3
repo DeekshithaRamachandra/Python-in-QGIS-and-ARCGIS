@@ -1,14 +1,15 @@
-# go_shopping.py
 # This script imports the easy_shopping package
-
+ 
 # Import classes from package
 from easy_shopping import Calculator, ShoppingCart
+
 
 # Test Calculator
 calc = Calculator()
 
 print("Package Calculator Test")
 print("10 + 5 =", calc.add(10, 5))
+
 
 # Test ShoppingCart
 cart = ShoppingCart()
