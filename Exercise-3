@@ -1,7 +1,24 @@
-# This file makes easy_shopping a Python package.
+# This module contains a Calculator class for performing basic mathematical operations.
+ 
+class Calculator:
+    """A simple calculator class."""
 
-# Import Calculator class
-from .calculator import Calculator
+    # Addition method
+    def add(self, a, b):
+        return a + b
 
-# Import ShoppingCart class
-from .shopping import ShoppingCart
+    # Subtraction method
+    def subtract(self, a, b):
+        return a - b
+
+    # Multiplication method
+    def multiply(self, a, b):
+        return a * b
+
+    # Division method
+    def divide(self, a, b):
+        # Prevent division by zero
+        if b == 0:
+            return "Error: Division by zero is not allowed."
+        return a / b
+ 
