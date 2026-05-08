@@ -1,42 +1,8 @@
- 
-# This module contains a ShoppingCart class for managing shopping cart items.
- 
-class ShoppingCart:
-    """A class representing a shopping cart."""
+This repository contains my solution for Exercise 3 of the Python in QGIS & ArcGIS
 
-    # Constructor method
-    def __init__(self):
-        # Dictionary to store items and quantities
-        self.cart = {}
-
-    # Add item to cart
-    def add_item(self, item, quantity):
-        # If item already exists, increase quantity
-        if item in self.cart:
-            self.cart[item] += quantity
-        else:
-            self.cart[item] = quantity
-
-    # Remove item from cart
-    def remove_item(self, item):
-        # Remove item only if it exists
-        if item in self.cart:
-            del self.cart[item]
-        else:
-            print(f"{item} not found in cart.")
-
-    # Display all items in the cart
-    def display_cart(self):
-        print("Current Shopping Cart:")
-        
-        # Check if cart is empty
-        if not self.cart:
-            print("Cart is empty.")
-        else:
-            for item, quantity in self.cart.items():
-                print(f"{item}: {quantity}")
-
-    # Calculate total quantity of items
-    def total_items(self):
-        return sum(self.cart.values())
- 
+Implemented Tasks:
+* Calculator class with addition, subtraction, multiplication, and division methods
+* ShoppingCart class with item management and quantity calculation
+* Error handling for division by zero
+* Python package creation using __init__.py
+* Successful package import in go_shopping.py
