@@ -1,22 +1,24 @@
-# This script imports the easy_shopping package
- 
-# Import classes from package
-from easy_shopping import Calculator, ShoppingCart
+# calculator.py
+# This module contains a Calculator class for performing basic mathematical operations.
 
-# Test Calculator
-calc = Calculator()
+class Calculator:
+    """A simple calculator class."""
 
-print("Package Calculator Test")
-print("10 + 5 =", calc.add(10, 5))
+    # Addition method
+    def add(self, a, b):
+        return a + b
 
+    # Subtraction method
+    def subtract(self, a, b):
+        return a - b
 
-# Test ShoppingCart
-cart = ShoppingCart()
+    # Multiplication method
+    def multiply(self, a, b):
+        return a * b
 
-cart.add_item("Bread", 2)
-cart.add_item("Eggs", 12)
-
-print("\nPackage Shopping Cart Test")
-cart.display_cart()
-
-print("Total quantity:", cart.total_items())
+    # Division method
+    def divide(self, a, b):
+        # Prevent division by zero
+        if b == 0:
+            return "Error: Division by zero is not allowed."
+        return a / b
