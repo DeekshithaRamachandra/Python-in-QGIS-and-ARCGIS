@@ -1,7 +1,6 @@
- 
 # calculator.py
 # This module contains a Calculator class for performing basic mathematical operations.
- 
+
 class Calculator:
     """A simple calculator class."""
 
