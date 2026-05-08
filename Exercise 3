@@ -1,8 +1,42 @@
-This repository contains my solution for Exercise 3 of the Python in QGIS & ArcGIS
+ 
+# Main script for testing Calculator and ShoppingCart classes
+ 
+# Import classes from modules
+from calculator import Calculator
+from shopping import ShoppingCart
 
-Implemented Tasks:
-* Calculator class with addition, subtraction, multiplication, and division methods
-* ShoppingCart class with item management and quantity calculation
-* Error handling for division by zero
-* Python package creation using __init__.py
-* Successful package import in go_shopping.py
+
+# Create Calculator object
+calc = Calculator()
+
+print("----- Calculator Tests -----")
+
+# Test calculations
+print("7 + 5 =", calc.add(7, 5))
+print("34 - 21 =", calc.subtract(34, 21))
+print("54 * 2 =", calc.multiply(54, 2))
+print("144 / 2 =", calc.divide(144, 2))
+print("45 / 0 =", calc.divide(45, 0))
+
+
+print("\n Shopping Cart Tests")
+
+# Create ShoppingCart object
+cart = ShoppingCart()
+
+# Add 3 different items
+cart.add_item("Apples", 4)
+cart.add_item("Bananas", 2)
+cart.add_item("Milk", 1)
+
+# Display cart and total quantity
+cart.display_cart()
+print("Total quantity:", cart.total_items())
+
+# Remove one item
+cart.remove_item("Bananas")
+
+# Display updated cart
+print("\nUpdated Cart:")
+cart.display_cart()
+print("Total quantity:", cart.total_items())
