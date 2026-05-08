@@ -1,1 +1,7 @@
-A package that combines the modules calculator.py and shopping.py in one package 
+# This file makes easy_shopping a Python package.
+
+# Import Calculator class
+from .calculator import Calculator
+
+# Import ShoppingCart class
+from .shopping import ShoppingCart
