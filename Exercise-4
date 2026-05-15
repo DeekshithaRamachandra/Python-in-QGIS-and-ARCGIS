@@ -33,3 +33,4 @@ for feature in output_layer.getFeatures():
 
     # Print result
     print(f"{district_name}: {count}")
+ 
