@@ -1,7 +1,39 @@
-This repository contains solutions for Exercise 4 of the Python in QGIS & ArcGIS
+# -----------------------------------------------------------
+# exercise_4_2.py
+# Exports selected school names and coordinates into a CSV file.
+# -----------------------------------------------------------
 
-Implemented Tasks:
-* Python action opening dynamic Wikipedia pages in a popup window
-* Extraction of school names and coordinates into a CSV file
-* Automated QGIS project creation with shapefile loading
-* Optional geoprocessing task for counting schools per district
+# Get active layer (Schools layer)
+layer = iface.activeLayer()
+
+# Path where CSV file will be saved
+ 
+output_file = r"C:\Users\DeekshithaRam\Documents\QGIS\SchoolReport.csv"
+
+# Open CSV file in write mode
+with open(output_file, "w", encoding="utf-8") as file:
+
+    # Write CSV header
+    file.write("SchoolName;X;Y\n")
+
+    # Loop through selected features only
+    for feature in layer.selectedFeatures():
+
+        # Get school name from attribute table
+        school_name = feature["NAME"]
+
+        # Get geometry
+        geom = feature.geometry()
+
+        # Extract coordinates
+        x = geom.asPoint().x()
+        y = geom.asPoint().y()
+
+        # Create CSV line
+        line = f"{school_name};{x};{y}\n"
+
+        # Write line into CSV
+        file.write(line)
+
+# Print success message
+print("SchoolReport.csv created successfully.")
