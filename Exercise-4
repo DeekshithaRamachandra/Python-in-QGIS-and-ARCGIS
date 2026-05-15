@@ -1,7 +1,58 @@
-This repository contains solutions for Exercise 4 of the Python in QGIS & ArcGIS
+# -----------------------------------------------------------
+# exercise_4_3.py
+# Creates a QGIS project and loads all shapefiles from the Muenster folder.
+# -----------------------------------------------------------
 
-Implemented Tasks:
-* Python action opening dynamic Wikipedia pages in a popup window
-* Extraction of school names and coordinates into a CSV file
-* Automated QGIS project creation with shapefile loading
-* Optional geoprocessing task for counting schools per district
+import os
+
+from qgis.core import (
+    QgsProject,
+    QgsVectorLayer
+)
+
+# Path to the Muenster folder
+folder_path = r""C:\Users\Deekshitha Ram\Downloads\Muenster""
+
+# Create new QGIS project instance
+project = QgsProject.instance()
+
+# Get all files from the folder
+files = os.listdir(folder_path)
+
+# Create empty list for shapefiles
+shapefiles = []
+
+# Store complete shapefile paths in list
+for file in files:
+
+    # Check if file is a shapefile
+    if file.endswith(".shp"):
+
+        # Create full path
+        full_path = os.path.join(folder_path, file)
+
+        # Add path to list
+        shapefiles.append(full_path)
+
+# Loop through shapefile list
+for shp in shapefiles:
+
+    # Create layer
+    layer_name = os.path.basename(shp).replace(".shp", "")
+    layer = QgsVectorLayer(shp, layer_name, "ogr")
+
+    # Check if layer is valid
+    if layer.isValid():
+
+        # Add layer to project
+        project.addMapLayer(layer)
+
+        print(layer_name, "loaded successfully.")
+
+    else:
+        print(layer_name, "failed to load.")
+
+# Save project
+project.write(r"C:\Muenster\myFirstProject.qgz")
+
+print("Project saved successfully.")
