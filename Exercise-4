@@ -35,3 +35,4 @@ with open(output_file, "w", encoding="utf-8") as file:
 
 # Print success message
 print("SchoolReport.csv created successfully.")
+ 
