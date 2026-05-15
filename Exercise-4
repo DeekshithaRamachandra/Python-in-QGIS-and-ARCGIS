@@ -1,7 +1,23 @@
-This repository contains solutions for Exercise 4 of the Python in QGIS & ArcGIS
+ 
+# exercise_4_1.py
+# Opens the Wikipedia page of a selected city district inside a popup window using QWebView.
+ 
+# Import required classes
+from qgis.PyQt.QtCore import QUrl
+from qgis.PyQt.QtWebKitWidgets import QWebView
 
-Implemented Tasks:
-* Python action opening dynamic Wikipedia pages in a popup window
-* Extraction of school names and coordinates into a CSV file
-* Automated QGIS project creation with shapefile loading
-* Optional geoprocessing task for counting schools per district
+# Get the district name from the selected feature
+# Replace "Name" with the correct field if necessary
+district_name = "[% \"Name\" %]"
+
+# Create Wikipedia URL dynamically
+url = "https://en.wikipedia.org/wiki/" + district_name
+
+# Create browser window
+web = QWebView()
+
+# Load URL into the popup window
+web.load(QUrl(url))
+
+# Show popup window
+web.show()
