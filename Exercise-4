@@ -1,0 +1,7 @@
+This repository contains solutions for Exercise 4 of the Python in QGIS & ArcGIS
+
+Implemented Tasks:
+* Python action opening dynamic Wikipedia pages in a popup window
+* Extraction of school names and coordinates into a CSV file
+* Automated QGIS project creation with shapefile loading
+* Optional geoprocessing task for counting schools per district
