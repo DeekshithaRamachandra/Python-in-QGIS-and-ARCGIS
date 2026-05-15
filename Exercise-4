@@ -1,14 +1,12 @@
-# -----------------------------------------------------------
 # exercise_4_2.py
 # Exports selected school names and coordinates into a CSV file.
-# -----------------------------------------------------------
-
+ 
 # Get active layer (Schools layer)
 layer = iface.activeLayer()
 
 # Path where CSV file will be saved
  
-output_file = r"C:\Users\DeekshithaRam\Documents\QGIS\SchoolReport.csv"
+output_file = r"C:\Users\Deekshitha Ram\Documents\QGIS\SchoolReport.csv"
 
 # Open CSV file in write mode
 with open(output_file, "w", encoding="utf-8") as file:
