@@ -1,23 +1,36 @@
+# exercise_4_4.py
+# Counts schools per city district using the countpointsinpolygon processing tool.
  
-# exercise_4_1.py
-# Opens the Wikipedia page of a selected city district inside a popup window using QWebView.
+
+import processing
+
+# Input layers
+districts = r"C:\Users\Deekshitha Ram\Downloads\Muenster\Muenster\Muenster_City_Districts.shp"
+schools = r"C:\Users\Deekshitha Ram\Downloads\Muenster\Muenster\Schools.shp"
+
+# Run geoprocessing tool
+result = processing.run(
+    "native:countpointsinpolygon",
+    {
+        'POLYGONS': districts,
+        'POINTS': schools,
+        'FIELD': 'NUMPOINTS',
+        'OUTPUT': 'memory:'
+    }
+)
+
+# Get output layer
+output_layer = result['OUTPUT']
+
+# Print results
+for feature in output_layer.getFeatures():
+
+    # Replace "Name" with correct district field if needed
+    district_name = feature["Name"]
+
+    # Get calculated number of schools
+    count = feature["NUMPOINTS"]
+
+    # Print result
+    print(f"{district_name}: {count}")
  
-# Import required classes
-from qgis.PyQt.QtCore import QUrl
-from qgis.PyQt.QtWebKitWidgets import QWebView
-
-# Get the district name from the selected feature
-# Replace "Name" with the correct field if necessary
-district_name = "[% \"Name\" %]"
-
-# Create Wikipedia URL dynamically
-url = "https://en.wikipedia.org/wiki/" + district_name
-
-# Create browser window
-web = QWebView()
-
-# Load URL into the popup window
-web.load(QUrl(url))
-
-# Show popup window
-web.show()
