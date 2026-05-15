@@ -1,8 +1,6 @@
-# -----------------------------------------------------------
 # exercise_4_3.py
 # Creates a QGIS project and loads all shapefiles from the Muenster folder.
-# -----------------------------------------------------------
-
+ 
 import os
 
 from qgis.core import (
