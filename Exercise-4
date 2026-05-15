@@ -1,9 +1,7 @@
-# -----------------------------------------------------------
+ 
 # exercise_4_1.py
-# QGIS Python Action:
 # Opens the Wikipedia page of a selected city district inside a popup window using QWebView.
-# -----------------------------------------------------------
-
+ 
 # Import required classes
 from qgis.PyQt.QtCore import QUrl
 from qgis.PyQt.QtWebKitWidgets import QWebView
