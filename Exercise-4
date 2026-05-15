@@ -1,36 +1,38 @@
-# exercise_4_4.py
-# Counts schools per city district using the countpointsinpolygon processing tool.
+# exercise_4_2.py
+# Exports selected school names and coordinates into a CSV file.
  
+# Get active layer (Schools layer)
+layer = iface.activeLayer()
 
-import processing
+# Path where CSV file will be saved
+ 
+output_file = r"C:\Users\Deekshitha Ram\Documents\QGIS\SchoolReport.csv"
 
-# Input layers
-districts = r"C:\Users\Deekshitha Ram\Downloads\Muenster\Muenster\Muenster_City_Districts.shp"
-schools = r"C:\Users\Deekshitha Ram\Downloads\Muenster\Muenster\Schools.shp"
+# Open CSV file in write mode
+with open(output_file, "w", encoding="utf-8") as file:
 
-# Run geoprocessing tool
-result = processing.run(
-    "native:countpointsinpolygon",
-    {
-        'POLYGONS': districts,
-        'POINTS': schools,
-        'FIELD': 'NUMPOINTS',
-        'OUTPUT': 'memory:'
-    }
-)
+    # Write CSV header
+    file.write("SchoolName;X;Y\n")
 
-# Get output layer
-output_layer = result['OUTPUT']
+    # Loop through selected features only
+    for feature in layer.selectedFeatures():
 
-# Print results
-for feature in output_layer.getFeatures():
+        # Get school name from attribute table
+        school_name = feature["NAME"]
 
-    # Replace "Name" with correct district field if needed
-    district_name = feature["Name"]
+        # Get geometry
+        geom = feature.geometry()
 
-    # Get calculated number of schools
-    count = feature["NUMPOINTS"]
+        # Extract coordinates
+        x = geom.asPoint().x()
+        y = geom.asPoint().y()
 
-    # Print result
-    print(f"{district_name}: {count}")
+        # Create CSV line
+        line = f"{school_name};{x};{y}\n"
+
+        # Write line into CSV
+        file.write(line)
+
+# Print success message
+print("SchoolReport.csv created successfully.")
  
