@@ -1,2 +1,118 @@
-Shows schools inside a selected city district.
-Selects and zooms to matching schools.
+# -----------------------------------------------------------
+# exercise_5_1.py
+# Shows schools inside a selected city district.
+# Loads layers automatically from file paths.
+# -----------------------------------------------------------
+
+from qgis.PyQt.QtWidgets import QInputDialog, QMessageBox
+
+from qgis.core import (
+    QgsProject,
+    QgsVectorLayer
+)
+
+# Get QGIS main window
+parent = iface.mainWindow()
+
+ 
+districts_path = r""C:\Users\Deekshitha Ram\Downloads\Muenster\Muenster\Muenster_City_Districts.shp""
+
+schools_path = r""C:\Users\Deekshitha Ram\Downloads\Muenster\Muenster\Schools.shp""
+
+# -----------------------------------------------------------
+# Load layers
+# -----------------------------------------------------------
+
+district_layer = QgsVectorLayer(
+    districts_path,
+    "Muenster_City_Districts",
+    "ogr"
+)
+
+school_layer = QgsVectorLayer(
+    schools_path,
+    "Schools",
+    "ogr"
+)
+
+# Add layers to QGIS project
+QgsProject.instance().addMapLayer(district_layer)
+QgsProject.instance().addMapLayer(school_layer)
+
+# -----------------------------------------------------------
+# Create district name list
+# -----------------------------------------------------------
+
+district_names = []
+
+for feature in district_layer.getFeatures():
+    district_names.append(feature["NAME"])
+
+district_names.sort()
+
+# -----------------------------------------------------------
+# Open dropdown dialog
+# -----------------------------------------------------------
+
+sDistrict, bOk = QInputDialog.getItem(
+    parent,
+    "District Names",
+    "Select District:",
+    district_names
+)
+
+# -----------------------------------------------------------
+# If user cancels
+# -----------------------------------------------------------
+
+if not bOk:
+
+    QMessageBox.warning(parent, "Schools", "User cancelled")
+
+# -----------------------------------------------------------
+# If user clicks OK
+# -----------------------------------------------------------
+
+else:
+
+    expression = f"\"NAME\" = '{sDistrict}'"
+
+    district_layer.selectByExpression(expression)
+
+    district_feature = next(district_layer.getSelectedFeatures())
+
+    district_geom = district_feature.geometry()
+
+    school_layer.removeSelection()
+
+    school_list = []
+    school_ids = []
+
+    for school in school_layer.getFeatures():
+
+        school_geom = school.geometry()
+
+        if school_geom.within(district_geom):
+
+            school_name = school["NAME"]
+            school_type = school["SchoolType"]
+
+            line = f"{school_name} ({school_type})"
+
+            school_list.append(line)
+
+            school_ids.append(school.id())
+
+    school_list.sort()
+
+    school_layer.selectByIds(school_ids)
+
+    iface.mapCanvas().zoomToSelected(school_layer)
+
+    result_text = "\n".join(school_list)
+
+    QMessageBox.information(
+        parent,
+        f"Schools in {sDistrict}",
+        result_text
+    )
