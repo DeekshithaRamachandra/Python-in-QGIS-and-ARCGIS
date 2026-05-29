@@ -15,9 +15,9 @@ from qgis.core import (
 parent = iface.mainWindow()
 
  
-districts_path = r""C:\Users\Deekshitha Ram\Downloads\Muenster\Muenster\Muenster_City_Districts.shp""
+districts_path = r"C:\Users\Deekshitha Ram\Downloads\Muenster\Muenster\Muenster_City_Districts.shp"
 
-schools_path = r""C:\Users\Deekshitha Ram\Downloads\Muenster\Muenster\Schools.shp""
+schools_path = r"C:\Users\Deekshitha Ram\Downloads\Muenster\Muenster\Schools.shp"
 
 # -----------------------------------------------------------
 # Load layers
