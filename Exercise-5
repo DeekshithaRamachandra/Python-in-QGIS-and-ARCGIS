@@ -1,28 +1,26 @@
 # -----------------------------------------------------------
-# exercise_5_2.py
-# Münster GeoGuesser
-# Loads district layer automatically.
+# exercise_5_1.py
+# Shows schools inside a selected city district.
+# Loads layers automatically from file paths.
 # -----------------------------------------------------------
 
 from qgis.PyQt.QtWidgets import QInputDialog, QMessageBox
 
 from qgis.core import (
     QgsProject,
-    QgsPointXY,
-    QgsGeometry,
-    QgsCoordinateReferenceSystem,
-    QgsCoordinateTransform,
     QgsVectorLayer
 )
 
 # Get QGIS main window
 parent = iface.mainWindow()
 
-
+ 
 districts_path = r"C:\Users\Deekshitha Ram\Downloads\Muenster\Muenster\Muenster_City_Districts.shp"
 
+schools_path = r"C:\Users\Deekshitha Ram\Downloads\Muenster\Muenster\Schools.shp"
+
 # -----------------------------------------------------------
-# Load district layer
+# Load layers
 # -----------------------------------------------------------
 
 district_layer = QgsVectorLayer(
@@ -31,92 +29,90 @@ district_layer = QgsVectorLayer(
     "ogr"
 )
 
-# Add layer to project
-QgsProject.instance().addMapLayer(district_layer)
-
-# -----------------------------------------------------------
-# Open coordinate dialog
-# -----------------------------------------------------------
-
-sCoords, bOK = QInputDialog.getText(
-    parent,
-    "Coordinates",
-    "Enter coordinates as latitude, longitude",
-    text="51.96066,7.62476"
+school_layer = QgsVectorLayer(
+    schools_path,
+    "Schools",
+    "ogr"
 )
 
-if bOK:
+# Add layers to QGIS project
+QgsProject.instance().addMapLayer(district_layer)
+QgsProject.instance().addMapLayer(school_layer)
 
-    try:
+# -----------------------------------------------------------
+# Create district name list
+# -----------------------------------------------------------
 
-        # Split coordinate string
-        coords = sCoords.split(",")
+district_names = []
 
-        latitude = float(coords[0].strip())
-        longitude = float(coords[1].strip())
+for feature in district_layer.getFeatures():
+    district_names.append(feature["NAME"])
 
-        # Create WGS84 point
-        point_wgs84 = QgsPointXY(longitude, latitude)
+district_names.sort()
 
-        # Coordinate systems
-        crs_wgs84 = QgsCoordinateReferenceSystem("EPSG:4326")
-        crs_etrs89 = QgsCoordinateReferenceSystem("EPSG:25832")
+# -----------------------------------------------------------
+# Open dropdown dialog
+# -----------------------------------------------------------
 
-        # Coordinate transformer
-        transformer = QgsCoordinateTransform(
-            crs_wgs84,
-            crs_etrs89,
-            QgsProject.instance()
-        )
+sDistrict, bOk = QInputDialog.getItem(
+    parent,
+    "District Names",
+    "Select District:",
+    district_names
+)
 
-        # Transform coordinates
-        transformed_point = transformer.transform(point_wgs84)
+# -----------------------------------------------------------
+# If user cancels
+# -----------------------------------------------------------
 
-        # Convert to geometry
-        point_geom = QgsGeometry.fromPointXY(transformed_point)
+if not bOk:
 
-        found = False
+    QMessageBox.warning(parent, "Schools", "User cancelled")
 
-        # Check districts
-        for district in district_layer.getFeatures():
-
-            district_geom = district.geometry()
-
-            if district_geom.contains(point_geom):
-
-                district_name = district["NAME"]
-
-                QMessageBox.information(
-                    parent,
-                    "GeoGuesser",
-                    f"The coordinates are inside {district_name}"
-                )
-
-                found = True
-
-                break
-
-        # Outside Münster
-        if not found:
-
-            QMessageBox.warning(
-                parent,
-                "GeoGuesser",
-                "Coordinates are outside Münster."
-            )
-
-    except:
-
-        QMessageBox.warning(
-            parent,
-            "Error",
-            "Invalid coordinate format."
-        )
+# -----------------------------------------------------------
+# If user clicks OK
+# -----------------------------------------------------------
 
 else:
 
-    QMessageBox.warning(
+    expression = f"\"NAME\" = '{sDistrict}'"
+
+    district_layer.selectByExpression(expression)
+
+    district_feature = next(district_layer.getSelectedFeatures())
+
+    district_geom = district_feature.geometry()
+
+    school_layer.removeSelection()
+
+    school_list = []
+    school_ids = []
+
+    for school in school_layer.getFeatures():
+
+        school_geom = school.geometry()
+
+        if school_geom.within(district_geom):
+
+            school_name = school["NAME"]
+            school_type = school["SchoolType"]
+
+            line = f"{school_name} ({school_type})"
+
+            school_list.append(line)
+
+            school_ids.append(school.id())
+
+    school_list.sort()
+
+    school_layer.selectByIds(school_ids)
+
+    iface.mapCanvas().zoomToSelected(school_layer)
+
+    result_text = "\n".join(school_list)
+
+    QMessageBox.information(
         parent,
-        "GeoGuesser",
-        "User cancelled."
+        f"Schools in {sDistrict}",
+        result_text
     )
