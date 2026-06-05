@@ -1,1 +1,114 @@
-This repository contains solutions for Exercise 6 of the Python in QGIS & ArcGIS
+# exercise_6_2.py
+# Updates swimming pool types and assigns city districts
+ 
+from qgis.core import (
+    QgsVectorLayer,
+    QgsProject,
+    QgsField
+)
+
+from PyQt5.QtCore import QVariant
+
+ 
+
+pools_path = r"C:\Users\Deekshitha Ram\Downloads\Data for Session 6\Data for Session 6\public_swimming_pools.shp"
+
+districts_path = r"C:\Users\Deekshitha Ram\Downloads\Muenster\Muenster\Muenster_City_Districts.shp"
+
+ 
+# Load layers
+ 
+pool_layer = QgsVectorLayer(
+    pools_path,
+    "public_swimming_pools",
+    "ogr"
+)
+
+district_layer = QgsVectorLayer(
+    districts_path,
+    "Muenster_City_Districts",
+    "ogr"
+)
+
+# Check layers
+if not pool_layer.isValid():
+    raise Exception("Could not load public_swimming_pools.shp")
+
+if not district_layer.isValid():
+    raise Exception("Could not load Muenster_City_Districts.shp")
+
+# Add layers to project
+QgsProject.instance().addMapLayer(pool_layer)
+QgsProject.instance().addMapLayer(district_layer)
+
+ 
+# Start editing
+ 
+pool_layer.startEditing()
+
+# Add district field if missing
+field_names = [field.name() for field in pool_layer.fields()]
+
+if "district" not in field_names:
+
+    pool_layer.dataProvider().addAttributes([
+        QgsField("district", QVariant.String, len=50)
+    ])
+
+    pool_layer.updateFields()
+
+# Get field indexes
+type_index = pool_layer.fields().indexOf("Type")
+district_index = pool_layer.fields().indexOf("district")
+
+ 
+# Update features
+ 
+for pool in pool_layer.getFeatures():
+
+    current_type = pool["Type"]
+
+    # Convert abbreviations
+    if current_type == "H":
+
+        pool_layer.changeAttributeValue(
+            pool.id(),
+            type_index,
+            "Hallenbad"
+        )
+
+    elif current_type == "F":
+
+        pool_layer.changeAttributeValue(
+            pool.id(),
+            type_index,
+            "Freibad"
+        )
+
+    pool_geom = pool.geometry()
+
+    district_name = ""
+
+    # Find containing district
+    for district in district_layer.getFeatures():
+
+        district_geom = district.geometry()
+
+        if pool_geom.within(district_geom):
+
+            district_name = district["NAME"]
+            break
+
+    # Write district name
+    pool_layer.changeAttributeValue(
+        pool.id(),
+        district_index,
+        district_name
+    )
+
+ 
+# Save changes
+ 
+pool_layer.commitChanges()
+
+print("Swimming pools updated successfully.")
