@@ -1,81 +1,114 @@
-# exercise_6_1.py
-# Creates a memory layer from
-# standard_land_value_muenster.csv
+# exercise_6_2.py
+# Updates swimming pool types and assigns city districts
  
 from qgis.core import (
     QgsVectorLayer,
-    QgsField,
-    QgsFeature,
-    QgsGeometry,
-    QgsProject
+    QgsProject,
+    QgsField
 )
 
 from PyQt5.QtCore import QVariant
 
  
-csv_file = r"C:\Users\Deekshitha Ram\Downloads\Data for Session 6\Data for Session 6\standard_land_value_muenster.csv"
+
+pools_path = r"C:\Users\Deekshitha Ram\Downloads\Data for Session 6\Data for Session 6\public_swimming_pools.shp"
+
+districts_path = r"C:\Users\Deekshitha Ram\Downloads\Muenster\Muenster\Muenster_City_Districts.shp"
 
  
-# Create memory layer
+# Load layers
  
-layer = QgsVectorLayer(
-    "Polygon?crs=EPSG:25832",
-    "temp_standard_land_value_muenster",
-    "memory"
+pool_layer = QgsVectorLayer(
+    pools_path,
+    "public_swimming_pools",
+    "ogr"
 )
 
-provider = layer.dataProvider()
+district_layer = QgsVectorLayer(
+    districts_path,
+    "Muenster_City_Districts",
+    "ogr"
+)
 
-# Add fields
-provider.addAttributes([
-    QgsField("standard_land_value", QVariant.Double),
-    QgsField("type", QVariant.String),
-    QgsField("district", QVariant.String)
-])
+# Check layers
+if not pool_layer.isValid():
+    raise Exception("Could not load public_swimming_pools.shp")
 
-layer.updateFields()
+if not district_layer.isValid():
+    raise Exception("Could not load Muenster_City_Districts.shp")
+
+# Add layers to project
+QgsProject.instance().addMapLayer(pool_layer)
+QgsProject.instance().addMapLayer(district_layer)
 
  
-# Read CSV file
+# Start editing
  
-with open(csv_file, "r", encoding="utf-8") as file:
+pool_layer.startEditing()
 
-    # Skip header
-    next(file)
+# Add district field if missing
+field_names = [field.name() for field in pool_layer.fields()]
 
-    for line in file:
+if "district" not in field_names:
 
-        line = line.strip()
+    pool_layer.dataProvider().addAttributes([
+        QgsField("district", QVariant.String, len=50)
+    ])
 
-        # Split columns
-        parts = line.split(";")
+    pool_layer.updateFields()
 
-        # Extract values
-        standard_land_value = float(parts[0])
-        land_type = parts[1]
-        district = parts[2]
-        wkt = parts[3]
+# Get field indexes
+type_index = pool_layer.fields().indexOf("Type")
+district_index = pool_layer.fields().indexOf("district")
 
-        # Create feature
-        feature = QgsFeature()
+ 
+# Update features
+ 
+for pool in pool_layer.getFeatures():
 
-        feature.setAttributes([
-            standard_land_value,
-            land_type,
-            district
-        ])
+    current_type = pool["Type"]
 
-        # Create geometry from WKT
-        feature.setGeometry(
-            QgsGeometry.fromWkt(wkt)
+    # Convert abbreviations
+    if current_type == "H":
+
+        pool_layer.changeAttributeValue(
+            pool.id(),
+            type_index,
+            "Hallenbad"
         )
 
-        provider.addFeature(feature)
+    elif current_type == "F":
 
-# Update layer
-layer.updateExtents()
+        pool_layer.changeAttributeValue(
+            pool.id(),
+            type_index,
+            "Freibad"
+        )
 
-# Add layer to QGIS
-QgsProject.instance().addMapLayer(layer)
+    pool_geom = pool.geometry()
 
-print("temp_standard_land_value_muenster created successfully.")
+    district_name = ""
+
+    # Find containing district
+    for district in district_layer.getFeatures():
+
+        district_geom = district.geometry()
+
+        if pool_geom.within(district_geom):
+
+            district_name = district["NAME"]
+            break
+
+    # Write district name
+    pool_layer.changeAttributeValue(
+        pool.id(),
+        district_index,
+        district_name
+    )
+
+ 
+# Save changes
+ 
+pool_layer.commitChanges()
+
+print("Swimming pools updated successfully.")
