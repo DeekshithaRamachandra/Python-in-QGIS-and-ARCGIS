@@ -1,1 +1,81 @@
-This repository contains solutions for Exercise 6 of the Python in QGIS & ArcGIS
+# exercise_6_1.py
+# Creates a memory layer from
+# standard_land_value_muenster.csv
+ 
+from qgis.core import (
+    QgsVectorLayer,
+    QgsField,
+    QgsFeature,
+    QgsGeometry,
+    QgsProject
+)
+
+from PyQt5.QtCore import QVariant
+
+ 
+csv_file = r"C:\Users\Deekshitha Ram\Downloads\Data for Session 6\Data for Session 6\standard_land_value_muenster.csv"
+
+ 
+# Create memory layer
+ 
+layer = QgsVectorLayer(
+    "Polygon?crs=EPSG:25832",
+    "temp_standard_land_value_muenster",
+    "memory"
+)
+
+provider = layer.dataProvider()
+
+# Add fields
+provider.addAttributes([
+    QgsField("standard_land_value", QVariant.Double),
+    QgsField("type", QVariant.String),
+    QgsField("district", QVariant.String)
+])
+
+layer.updateFields()
+
+ 
+# Read CSV file
+ 
+with open(csv_file, "r", encoding="utf-8") as file:
+
+    # Skip header
+    next(file)
+
+    for line in file:
+
+        line = line.strip()
+
+        # Split columns
+        parts = line.split(";")
+
+        # Extract values
+        standard_land_value = float(parts[0])
+        land_type = parts[1]
+        district = parts[2]
+        wkt = parts[3]
+
+        # Create feature
+        feature = QgsFeature()
+
+        feature.setAttributes([
+            standard_land_value,
+            land_type,
+            district
+        ])
+
+        # Create geometry from WKT
+        feature.setGeometry(
+            QgsGeometry.fromWkt(wkt)
+        )
+
+        provider.addFeature(feature)
+
+# Update layer
+layer.updateExtents()
+
+# Add layer to QGIS
+QgsProject.instance().addMapLayer(layer)
+
+print("temp_standard_land_value_muenster created successfully.")
