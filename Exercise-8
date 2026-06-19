@@ -1,7 +1,4 @@
-[general]
-name=Muenster City District Tools
-description=City District Analysis Plugin
-version=1.0
-qgisMinimumVersion=3.0
-author= Deekshitha Ram
-email= dram@uni-muenster.de
+def classFactory(iface):
+    from .plugin import MuensterCityDistrictTools
+    return MuensterCityDistrictTools(iface)
+ 
