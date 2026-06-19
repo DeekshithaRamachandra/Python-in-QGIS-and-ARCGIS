@@ -1,13 +1,77 @@
-This project implements the plugin
-“Muenster City District Tools”.
+from reportlab.platypus import (
+    SimpleDocTemplate,
+    Paragraph,
+    Spacer
+)
 
-Implemented Features:
-- Attribute query for selected city districts
-- Validation of feature selection
-- District profile GUI
-- CSV export functionality
-- PDF profile generation
-- Separate PDF creation module
-- Qt Designer based user interfaces
+from reportlab.lib.styles import getSampleStyleSheet
 
-The plugin was developed and tested in QGIS 3.x using Python and PyQt.
+
+def create_pdf_profile(
+        district_name,
+        parent_district,
+        area,
+        households,
+        parcels,
+        schools,
+        pools,
+        output_file):
+
+    doc = SimpleDocTemplate(output_file)
+
+    styles = getSampleStyleSheet()
+
+    story = []
+
+    story.append(
+        Paragraph(
+            f"<b>{district_name}</b>",
+            styles["Title"]
+        )
+    )
+
+    story.append(Spacer(1, 12))
+
+    story.append(
+        Paragraph(
+            f"Parent District: {parent_district}",
+            styles["BodyText"]
+        )
+    )
+
+    story.append(
+        Paragraph(
+            f"Area: {area:.2f} m²",
+            styles["BodyText"]
+        )
+    )
+
+    story.append(
+        Paragraph(
+            f"Households: {households}",
+            styles["BodyText"]
+        )
+    )
+
+    story.append(
+        Paragraph(
+            f"Parcels: {parcels}",
+            styles["BodyText"]
+        )
+    )
+
+    story.append(
+        Paragraph(
+            f"Schools: {schools}",
+            styles["BodyText"]
+        )
+    )
+
+    story.append(
+        Paragraph(
+            f"Pools: {pools}",
+            styles["BodyText"]
+        )
+    )
+
+    doc.build(story)
