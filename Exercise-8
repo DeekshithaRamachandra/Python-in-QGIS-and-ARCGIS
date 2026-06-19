@@ -1,13 +1,7 @@
-This project implements the plugin
-“Muenster City District Tools”.
-
-Implemented Features:
-- Attribute query for selected city districts
-- Validation of feature selection
-- District profile GUI
-- CSV export functionality
-- PDF profile generation
-- Separate PDF creation module
-- Qt Designer based user interfaces
-
-The plugin was developed and tested in QGIS 3.x using Python and PyQt.
+lblDistrict
+lblParentDistrict
+lblArea
+lblHouseholds
+lblParcels
+lblSchools
+lblPools 
