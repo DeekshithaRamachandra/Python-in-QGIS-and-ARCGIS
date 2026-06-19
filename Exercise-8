@@ -73,8 +73,7 @@ class MuensterCityDistrictTools:
 
     
     # ATTRIBUTE QUERY
-    
-
+ 
     def show_attributes(self):
 
         district_layer = QgsProject.instance().mapLayersByName(
@@ -111,9 +110,8 @@ class MuensterCityDistrictTools:
             f"District: {district['Name']}"
         )
 
-   
+    
     # EXPORT
-     
 
     def export_data(self):
 
