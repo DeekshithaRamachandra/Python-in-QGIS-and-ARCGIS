@@ -1,7 +1,3 @@
-lblDistrict
-lblParentDistrict
-lblArea
-lblHouseholds
-lblParcels
-lblSchools
-lblPools 
+btnAttributes
+btnExport 
+ 
