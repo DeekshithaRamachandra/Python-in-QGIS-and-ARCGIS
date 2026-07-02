@@ -1,0 +1,11 @@
+This project contains an ArcGIS Pro Script Tool that finds the nearest bus stop
+to an input point using the ArcPy Near tool.
+
+The script:
+
+- accepts a Feature Set as input
+- runs the Near analysis tool
+- retrieves the nearest bus stop
+- prints the nearest bus stop name
+- prints the distance in meters
+- displays the results in the ArcGIS Pro Geoprocessing Window
