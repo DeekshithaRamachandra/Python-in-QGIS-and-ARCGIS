@@ -1,11 +1,121 @@
-This project contains an ArcGIS Pro Script Tool that finds the nearest bus stop
-to an input point using the ArcPy Near tool.
+import arcpy
+import os
+import sys
 
-The script:
 
-- accepts a Feature Set as input
-- runs the Near analysis tool
-- retrieves the nearest bus stop
-- prints the nearest bus stop name
-- prints the distance in meters
-- displays the results in the ArcGIS Pro Geoprocessing Window
+def main():
+    """Main function."""
+
+    try:
+
+        
+        # Allow outputs to be overwritten
+        arcpy.env.overwriteOutput = True
+
+         
+        # Get the input point from the Script Tool
+        # Parameter 0 = Feature Set
+        input_point = arcpy.GetParameterAsText(0)
+
+        if not input_point:
+            arcpy.AddError("No input point was provided.")
+            return
+
+        
+        # Path to the geodatabase
+        # Change this path to your own location
+        gdb_path = r"C:\Users\deekshitharam\Downloads\exercise_arcpy\exercise_arcpy_2.gdb"
+
+        # Bus stop feature class
+        bus_stops = os.path.join(gdb_path, "stops_ms_mitte")
+
+         
+        # Verify that the feature class exists
+        if not arcpy.Exists(bus_stops):
+            arcpy.AddError(f"Feature class not found:\n{bus_stops}")
+            return
+
+     
+        # Run the Near Tool
+        # The Near tool adds two important fields to the input:
+        #
+        # NEAR_FID
+        # NEAR_DIST
+        arcpy.AddMessage("Running Near Tool...")
+
+        arcpy.analysis.Near(
+            in_features=input_point,
+            near_features=bus_stops
+        )
+
+        arcpy.AddMessage("Near Tool completed successfully.")
+
+       
+        # Read the Near results
+        near_fid = None
+        near_distance = None
+
+        with arcpy.da.SearchCursor(
+                input_point,
+                ["NEAR_FID", "NEAR_DIST"]) as cursor:
+
+            for row in cursor:
+                near_fid = row[0]
+                near_distance = row[1]
+                break
+
+      
+        # Check if a nearest feature exists
+        if near_fid is None or near_fid == -1:
+            arcpy.AddWarning("No nearby bus stop was found.")
+            return
+
+      
+        # Determine the ObjectID field automatically
+        oid_field = arcpy.Describe(bus_stops).OIDFieldName
+
+        where_clause = f"{oid_field} = {near_fid}"
+
+         
+       
+        name_field = "LOC_DESC"
+
+        bus_stop_name = "Unknown"
+
+        with arcpy.da.SearchCursor(
+                bus_stops,
+                [name_field],
+                where_clause) as cursor:
+
+            for row in cursor:
+                bus_stop_name = row[0]
+                break
+
+       
+        # Print results to the Geoprocessing Window
+       
+        arcpy.AddMessage("")
+        arcpy.AddMessage("========================================")
+        arcpy.AddMessage("Nearest Bus Stop Result")
+        arcpy.AddMessage("========================================")
+        arcpy.AddMessage(f"Nearest Bus Stop : {bus_stop_name}")
+        arcpy.AddMessage(f"Distance         : {near_distance:.2f} meters")
+        arcpy.AddMessage("========================================")
+
+     
+    # ArcPy specific errors
+    
+    except arcpy.ExecuteError:
+        arcpy.AddError(arcpy.GetMessages(2))
+ 
+    # Python errors
+   
+    except Exception as error:
+        arcpy.AddError(str(error))
+        arcpy.AddError(sys.exc_info()[0])
+
+ 
+# Entry point
+ 
+if __name__ == "__main__":
+    main()
