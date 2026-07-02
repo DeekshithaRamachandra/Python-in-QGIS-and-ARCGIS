@@ -1,1 +1,75 @@
-Exercise 9
+import arcpy
+
+
+def copy_active_assets():
+
+    # Set the workspace
+    arcpy.env.workspace = r"C:\Users\deekshitharam\Downloads\exercise_arcpy\exercise_arcpy_1.gdb"
+    arcpy.env.overwriteOutput = True
+
+    # List all point feature classes
+    point_fcs = arcpy.ListFeatureClasses(feature_type="Point")
+
+    # Create active_assets only if it does not already exist
+    if "active_assets" not in point_fcs:
+        sr = arcpy.Describe(point_fcs[0]).spatialReference
+        arcpy.management.CreateFeatureclass(
+            arcpy.env.workspace,
+            "active_assets",
+            "POINT",
+            spatial_reference=sr
+        )
+        arcpy.management.AddField("active_assets", "status", "TEXT")
+        arcpy.management.AddField("active_assets", "type", "TEXT")
+
+    fields = ["SHAPE@", "status", "type"]
+
+    # Copy only active rows
+    with arcpy.da.InsertCursor("active_assets", fields) as i_cur:
+        for fc in point_fcs:
+            # Don't read from the target feature class
+            if fc == "active_assets":
+                continue
+            with arcpy.da.SearchCursor(fc, fields, where_clause="status = 'active'") as s_cur:
+                for row in s_cur:
+                    i_cur.insertRow(row)
+
+    print("Active assets copied successfully.")
+
+
+def create_coverage():
+    # I choose the first method to project to metres because there is only a single buffer call and the code is more cleaner
+    
+    #Project active_assets to a metric coordinate system (ETRS89 / UTM Zone 32N)
+    arcpy.management.Project(
+        "active_assets",
+        "active_assets_projected",
+        arcpy.SpatialReference(25832)
+    )
+
+    #Add a helper field to store buffer distances after checking whether it already exists
+    field_names = [field.name for field in arcpy.ListFields("active_assets_projected")]
+    if "buffer_dist" not in field_names:
+        arcpy.management.AddField("active_assets_projected", "buffer_dist", "DOUBLE")
+
+    #Calculate the buffer distance based on the type field
+    expr = "dist(!type!)"
+    codeblock = """
+def dist(t):
+    return {"mast": 300, "mobile_antenna": 50, "building_antenna": 100}.get(t, 0)
+"""
+    arcpy.management.CalculateField("active_assets_projected", "buffer_dist", expr, "PYTHON3", codeblock)
+
+    # Create the coverage feature class
+    arcpy.analysis.Buffer("active_assets_projected", "coverage", "buffer_dist")
+
+    print("Coverage created successfully")
+
+    
+def main():
+    copy_active_assets()
+    create_coverage()
+
+
+if __name__ == "__main__":
+    main()
